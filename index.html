@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejction calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+
+
+ 
+<div class="shell">
+  <div class="masthead">
+    <div class="eyebrow">Scorecard · Invalid Account Rejection</div>
+    <h1>Deduction Calculator</h1>
+    <div class="formula-tag">Final Deduction = ((RR &minus; T) / (M &minus; T))^k &times; 5 &times; (N / VF)</div>
+  </div>
+
+  
+   <div hidden>
+    <input type="number" id="T" value="0">
+    <input type="number" id="M" value="5">
+    <input type="number" id="V" value="50">
+    <input type="number" id="k" value="1">
+   </div>
+  <div class="panel">
+    <h2>Employee</h2>
+    <div class="field">
+      <div class="field-label">
+        <span>Name</span>
+        <span class="field-hint">Optional — for your own reference</span>
+      </div>
+      <div class="name-input">
+        <input type="text" id="empName" placeholder="e.g. Chidinma O." />
+      </div>
+    </div>
+    <div class="entry-grid">
+      <div class="field">
+        <div class="field-label"><span>Accounts completed (N)</span></div>
+        <div class="num-input big">
+          <input type="number" id="accounts" value="100" min="0" step="1" />
+          <span class="suffix">acct</span>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label"><span>Rejections</span></div>
+        <div class="num-input big">
+          <input type="number" id="rejections" value="2" min="0" step="1" />
+          <span class="suffix">rej</span>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+ <!-- <div class="panel">
+     <h2>Role</h2>
+  <div class="role-options" id="roleOptions">
+    <button class="role-btn active" data-role="modifier">
+      <div class="cb-label">Modifier</div>
+      <div class="cb-desc">Standard tolerance for rejections.</div>
+    </button>
+    <button class="role-btn" data-role="verifier">
+      <div class="cb-label">Verifier</div>
+      <div class="cb-desc">Stricter — verifiers are the last check before submission.</div>
+    </button>
+  </div>
+    <h2>Model Settings</h2>
+    <div class="knob-grid">
+      <div class="field">
+        <div class="field-label">
+          <span>Threshold (T)</span>
+          <span class="field-hint">No deduction below this rate</span>
+        </div>
+        <div class="num-input">
+          <input type="number" id="T" value="1" min="0" max="5" step="0.5" />
+          <span class="suffix">%</span>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">
+          <span>Max Rate (M)</span>
+          <span class="field-hint">Rate at which raw deduction = 100</span>
+        </div>
+        <div class="num-input">
+          <input type="number" id="M" value="10" min="0" max="100" step="0.5" />
+          <span class="suffix">%</span>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">
+          <span>Volume Floor (VF)</span>
+          <span class="field-hint">Accounts needed for full confidence</span>
+        </div>
+        <div class="num-input">
+          <input type="number" id="V" value="50" min="1" step="1" />
+          <span class="suffix">acct</span>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">
+          <span>Curve (k)</span>
+          <span class="field-hint">Selected below</span>
+        </div>
+        <div class="num-input">
+          <input type="number" id="k" value="1" min="0.1" step="0.1" />
+        </div>
+      </div>
+    </div>-->
+
+    <div class="panel">
+  <h2>Account Type</h2>
+  <div class="role-options" id="typeOptions">
+    <button class="role-btn active" data-type="opening">
+      <div class="cb-label">Account Opening</div>
+      <div class="cb-desc">Fixed typical volume.</div>
+    </button>
+    <button class="role-btn" data-type="maintenance">
+      <div class="cb-label">Account Maintenance</div>
+      <div class="cb-desc">Volume varies monthly.</div>
+    </button>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Role</h2>
+  <div class="role-options" id="roleOptions">
+    <button class="role-btn active" data-role="modifier">
+      <div class="cb-label">Modifier</div>
+      <div class="cb-desc">Standard tolerance.</div>
+    </button>
+    <button class="role-btn" data-role="verifier">
+      <div class="cb-label">Verifier</div>
+      <div class="cb-desc">Stricter checkpoint.</div>
+    </button>
+  </div>
+</div>
+
+<div class="panel" id="tierPanel" hidden>
+  <h2>Monthly Volume Tier</h2>
+  <div class="role-options" id="tierOptions" style="grid-template-columns: 1fr 1fr;">
+    <button class="role-btn active" data-tier="under30">
+      <div class="cb-label">Under 30</div>
+    </button>
+    <button class="role-btn" data-tier="30to75">
+      <div class="cb-label">30–75</div>
+    </button>
+    <button class="role-btn" data-tier="75to150">
+      <div class="cb-label">75–150</div>
+    </button>
+    <button class="role-btn" data-tier="150plus">
+      <div class="cb-label">150+</div>
+    </button>
+  </div>
+</div>
+ 
+  <!--  <div class="field" style="margin-top:14px;">
+      <div class="field-label"><span>Curve shape</span></div>
+      <div class="curve-options" id="curveOptions">
+        <button class="curve-btn active" data-k="1">
+          <div class="cb-label">Linear (k = 1)</div>
+          <div class="cb-desc">Every % over threshold costs the same.</div>
+        </button>
+        <button class="curve-btn" data-k="2">
+          <div class="cb-label">Lenient &rarr; Harsh (k = 2)</div>
+          <div class="cb-desc">Forgiving near threshold, steep near max.</div>
+        </button>
+        <button class="curve-btn" data-k="0.5">
+          <div class="cb-label">Harsh &rarr; Flat (k = 0.5)</div>
+          <div class="cb-desc">Stings early, then levels off.</div>
+        </button>
+      </div>
+    </div>
+  -->
+    <div class="field" style="margin-top:14px;">
+      <div class="field-label"><span>Curve shape</span></div>
+      <div class="curve-options" id="curveOptions">
+        <div class="curve-btn active" id="curveDisplay">
+          <div class="cb-label" id="curveLabel">Linear (k = 1)</div>
+          <div class="cb-desc" id="curveDesc">Every % over threshold costs the same.</div>
+        </div>
+      </div>
+    </div>
+  <div class="error-box" id="errorBox" hidden></div>
+ 
+  <div class="result-panel">
+    <div class="result-name" id="resultName">This employee</div>
+    <div class="result-main">
+      <span class="big-num" id="finalScore">0.0</span>
+      <span class="big-label" id="maxLabel">points deducted / 5</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill" id="barFill" style="width:0%;"></div>
+    </div>
+    <div class="breakdown">
+      <div class="breakdown-item">
+        <div class="bd-label">Rejection Rate</div>
+        <div class="bd-value" id="rrValue">0.00%</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="bd-label">Final Deduction</div>
+        <div class="bd-value" id="rawValue">0.0</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="bd-label">Confidence (VF)</div>
+        <div class="bd-value" id="vfValue">0.00</div>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="footnote">
+    <p>All values are calculated in real time as you enter data. The final deduction is rounded to the nearest tenth of a point.</p>
+    
+ <div class="footnote">
+  <p>All values are calculated in real time as you enter data. The final deduction is rounded to the nearest tenth of a point.</p>
+
+  <h3 class="footnote-heading">Variables</h3>
+  <p><strong>RR</strong> &mdash; Rejection Rate. The share of an employee's completed accounts that were rejected that month, calculated as Rejections &divide; Accounts.</p>
+  <p><strong>T</strong> &mdash; Threshold. The rejection rate below which no points are deducted at all, since a small number of errors shouldn't be punished.</p>
+  <p><strong>M</strong> &mdash; Max Rate. The rejection rate at which the rate-based deduction reaches its full severity.</p>
+  <p><strong>k</strong> &mdash; Curve Exponent. Controls how sharply the deduction increases as the rejection rate moves from T toward M &mdash; a gentle ramp or a steep one. Set automatically by the selected Account Type and Role.</p>
+  <p><strong>N</strong> &mdash; Total Accounts. The number of accounts the employee completed that month.</p>
+  <p><strong>VF</strong> &mdash; Volume Floor. The number of accounts needed before the rejection rate is treated as fully trustworthy. Below this, the deduction is scaled down, since a small sample of work shouldn't be judged as harshly as a large one.</p>
+
+  <h3 class="footnote-heading">Formula</h3>
+  <p class="formula-final">Final Deduction = ((RR &minus; T) / (M &minus; T))^k &times; 5 &times; (N / VF)</p>
+  <p>RR is compared against T and M to find how far along the severity scale the employee sits, that position is shaped by the curve (k), scaled to the 5-point maximum, then adjusted down if the employee's monthly volume (N) falls short of the trusted volume floor (VF). The result is always bounded between 0 and 5.</p>
+
+  <h3 class="footnote-heading">Rejection Cap Override</h3>
+  <p>Regardless of the formula above, logging <strong>5 or more rejections</strong> in a single month automatically applies the full maximum deduction (5 points) &mdash; the rate-based calculation, threshold, curve, and volume floor are all bypassed once this cap is reached.</p>
+</div>
+</div>
+</div>
+    
+</body>
+</html>
