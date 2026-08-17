@@ -18,8 +18,8 @@ function updateCurveDisplay(k) {
 }
 
   const OPENING_PRESETS = {
-  modifier: { T: 0, M: 5, k: 1,   V: 50 },
-  verifier: { T: 0, M: 5, k: 0.6, V: 30 },
+  modifier: { T: 0, M: 5, k: 1, },
+  verifier: { T: 0, M: 5, k: 0.6, },
 };
 
 const MAINTENANCE_TIERS = {
@@ -59,15 +59,24 @@ function applyMaintenancePreset(role, tier) {
 
 function applyOpeningPreset(role) {
   const preset = OPENING_PRESETS[role];
+  const V = MAINTENANCE_TIERS[currentTier][role];
+
   el.T.value = preset.T;
   el.M.value = preset.M;
   el.k.value = preset.k;
-  el.V.value = preset.V;
+  el.V.value = V;
   updateCurveDisplay(preset.k);
   recalc();
-
- 
 }
+
+function applyCurrentPreset() {
+  if (currentType === 'opening') {
+    applyOpeningPreset(currentRole);
+  } else {
+    applyMaintenancePreset(currentRole, currentTier);
+  }
+}
+
  
   function computeDeduction(accounts, rejections, T, M, k, V) {
   
@@ -202,38 +211,31 @@ function recalc() {
 }
 
 
-
-
-
 let currentType = 'opening';
 let currentRole = 'modifier';
 let currentTier = 'under30';
 
 function autoUpdateTier() {
-  if (currentType !== 'maintenance') return; // tier only applies to Account Maintenance
-
   const N = Number(el.accounts.value);
   if (isNaN(N) || N <= 0) return;
 
   const newTier = tierFromVolume(N);
-  if (newTier === currentTier) return; // no change needed
+  if (newTier === currentTier) return;
 
   currentTier = newTier;
 
-  // sync the active tier button visually
   document.querySelectorAll('#tierOptions .role-btn').forEach((b) => {
     b.classList.toggle('active', b.dataset.tier === newTier);
   });
 
-  applyMaintenancePreset(currentRole, currentTier);
+  applyCurrentPreset();
 }
 
 function updatePreset() {
-  document.getElementById('tierPanel').hidden = currentType !== 'maintenance';
-  if (currentType === 'maintenance') {
-    autoUpdateTier(); // re-sync tier with the already-typed N before applying the preset
-  }
-
+  document.getElementById('tierPanel').hidden = false;
+  autoUpdateTier();
+  applyCurrentPreset();
+}
 
   if (currentType === 'opening') {
     applyOpeningPreset(currentRole);

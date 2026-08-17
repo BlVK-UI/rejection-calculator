@@ -87,7 +87,6 @@
     <div class="field">
       <div class="field-label">
         <span>Name</span>
-        <span class="field-hint">Optional — for your own reference</span>
       </div>
       <div class="name-input">
         <input type="text" id="empName" placeholder="e.g. Chidinma O." />
@@ -171,7 +170,7 @@
   <div class="role-options" id="typeOptions">
     <button class="role-btn active" data-type="opening">
       <div class="cb-label">Account Opening</div>
-      <div class="cb-desc">Fixed typical volume.</div>
+      <div class="cb-desc">Fixed volume.</div>
     </button>
     <button class="role-btn" data-type="maintenance">
       <div class="cb-label">Account Maintenance</div>
@@ -194,7 +193,7 @@
   </div>
 </div>
 
-<div class="panel" id="tierPanel" hidden>
+<div class="panel" id="tierPanel" >
   <h2>Monthly Volume Tier</h2>
   <div class="role-options" id="tierOptions" style="grid-template-columns: 1fr 1fr;">
     <button class="role-btn active" data-tier="under30">
@@ -277,7 +276,7 @@
   <p>All values are calculated in real time as you enter data. The final deduction is rounded to the nearest tenth of a point.</p>
 
   <h3 class="footnote-heading">Variables</h3>
-  <p><strong>RR</strong> &mdash; Rejection Rate. The share of an employee's completed accounts that were rejected that month, calculated as Rejections &divide; Accounts.</p>
+  <p><strong>RR</strong> &mdash; Rejection Rate. The share of an employee's completed accounts that  Rejections &divide; Accounts.</p>
   <p><strong>T</strong> &mdash; Threshold. The rejection rate below which no points are deducted at all, since a small number of errors shouldn't be punished.</p>
   <p><strong>M</strong> &mdash; Max Rate. The rejection rate at which the rate-based deduction reaches its full severity.</p>
   <p><strong>k</strong> &mdash; Curve Exponent. Controls how sharply the deduction increases as the rejection rate moves from T toward M &mdash; a gentle ramp or a steep one. Set automatically by the selected Account Type and Role.</p>
