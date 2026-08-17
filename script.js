@@ -124,11 +124,20 @@ function applyOpeningPreset(role) {
     input.addEventListener('input', recalc);
   });
 
-  //Block deciman inputs
-  [el.accounts, el.rejections].forEach((input) => {
+  // Block decimal points in Accounts and Rejections (keyboard)
+[el.accounts, el.rejections].forEach((input) => {
   input.addEventListener('keydown', (e) => {
     if (e.key === '.' || e.key === ',') {
       e.preventDefault();
+    }
+  });
+});
+
+// Strip decimal points in Accounts and Rejections (paste, mobile, autofill)
+[el.accounts, el.rejections].forEach((input) => {
+  input.addEventListener('input', () => {
+    if (input.value.includes('.') || input.value.includes(',')) {
+      input.value = input.value.replace(/[.,]/g, '');
     }
   });
 });
