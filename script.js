@@ -292,9 +292,20 @@ document.getElementById('maxLabel').textContent = `points deducted / ${MAX_DEDUC
 
 
 
-document.getElementById('saveRecordBtn').addEventListener('click', async () => {
-console.log('1. Save button clicked');
+function waitForFirebase(callback, attempts = 0) {
+  if (typeof window.saveRejectionRecord === 'function') {
+    callback();
+  } else if (attempts < 50) {
+    setTimeout(() => waitForFirebase(callback, attempts + 1), 100);
+  } else {
+    console.error('Firebase never became available.');
+  }
+}
 
+document.getElementById('saveRecordBtn').addEventListener('click', async () => {
+  await new Promise((resolve) => waitForFirebase(resolve));
+
+  console.log('1. Button clicked');
 
   const statusEl = document.getElementById('saveStatus');
   const name = el.name.value.trim();
@@ -304,8 +315,9 @@ console.log('1. Save button clicked');
     statusEl.style.color = '#a3372f';
     return;
   }
-   
-    console.log('2. Validating inputs before saving');
+
+  console.log('2. Name check passed:', name);
+
   const result = computeDeduction(
     el.accounts.value,
     el.rejections.value,
@@ -315,13 +327,12 @@ console.log('1. Save button clicked');
     Number(el.V.value)
   );
 
-    console.log( '3. COmputed results:', result);
+  console.log('3. Computed result:', result);
 
   statusEl.textContent = 'Saving...';
   statusEl.style.color = '#6b6656';
 
-   console.log('4 About to call window.saveRejectionRecord with:',typeof window.saveRejectionRecord);
-
+  console.log('4. About to call saveRejectionRecord. Does it exist?', typeof window.saveRejectionRecord);
 
   const response = await window.saveRejectionRecord({
     name: name,
@@ -334,7 +345,7 @@ console.log('1. Save button clicked');
     finalDeduction: result.final
   });
 
-  console.log('5. Save response:', response);
+  console.log('5. Got response:', response);
 
   if (response.success) {
     statusEl.textContent = 'Saved.';
