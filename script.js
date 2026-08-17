@@ -237,12 +237,6 @@ function updatePreset() {
   applyCurrentPreset();
 }
 
-  if (currentType === 'opening') {
-    applyOpeningPreset(currentRole);
-  } else {
-    applyMaintenancePreset(currentRole, currentTier);
-  }
-}
 
 document.getElementById('typeOptions').querySelectorAll('.role-btn').forEach((btn) => {
   btn.addEventListener('click', () => {
