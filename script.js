@@ -123,6 +123,15 @@ function applyOpeningPreset(role) {
   [el.name, el.accounts, el.rejections, el.T, el.M, el.V, el.k].forEach((input) => {
     input.addEventListener('input', recalc);
   });
+
+  //Block deciman inputs
+  [el.accounts, el.rejections].forEach((input) => {
+  input.addEventListener('keydown', (e) => {
+    if (e.key === '.' || e.key === ',') {
+      e.preventDefault();
+    }
+  });
+});
   
   el.accounts.addEventListener('input', autoUpdateTier);
 
