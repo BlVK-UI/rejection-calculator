@@ -273,3 +273,11 @@
     font-size: 16px; /* same reason */
   }
 }
+
+#saveRecordBtn {
+  margin-top:12px; width:100%; padding:10px; background:var(--accent); color:white; border:none; border-radius:2px; font-family:var(--mono); cursor:pointer;
+}
+
+#saveStatus {
+  font-family:var(--mono); font-size:11px; margin-top:6px;
+}
