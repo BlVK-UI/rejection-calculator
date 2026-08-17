@@ -117,24 +117,7 @@ function applyOpeningPreset(role) {
     curveOptions: document.getElementById('curveOptions'),
   };
  
-  function recalc() {
-    const result = computeDeduction(
-      el.accounts.value,
-      el.rejections.value,
-      Number(el.T.value),
-      Number(el.M.value),
-      Number(el.k.value),
-      Number(el.V.value)
-    );
- 
-    el.resultName.textContent = el.name.value.trim() ? el.name.value.trim() : 'This employee';
-    el.finalScore.textContent = result.final.toFixed(1);
-    el.barFill.style.width = result.final + '%';
-    el.barFill.style.background = barColor(result.final);
-    el.rrValue.textContent = result.RR.toFixed(2) + '%';
-    el.rawValue.textContent = result.rawDeduction.toFixed(1);
-    el.vfValue.textContent = result.VF.toFixed(2);
-  }
+  
  
   // Recalculate whenever any input changes
   [el.name, el.accounts, el.rejections, el.T, el.M, el.V, el.k].forEach((input) => {
@@ -200,24 +183,7 @@ function recalc() {
   el.vfValue.textContent = result.VF.toFixed(2);
 }
 
-const ROLE_PRESETS = {
-  modifier: { T: 0,   M: 5, k: 1 },
-  verifier: { T: 0, M: 5,  k: 0.6},
-};
 
-function applyRolePreset(role) {
-  const preset = ROLE_PRESETS[role];
-  el.T.value = preset.T;
-  el.M.value = preset.M;
-  el.k.value = preset.k;
-
-  // sync the curve-shape buttons to match the new k
-  document.querySelectorAll('.curve-btn').forEach((b) => {
-    b.classList.toggle('active', Number(b.dataset.k) === preset.k);
-  });
-
-  recalc();
-}
 
 
 
