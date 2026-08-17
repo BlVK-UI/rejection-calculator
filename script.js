@@ -293,6 +293,9 @@ document.getElementById('maxLabel').textContent = `points deducted / ${MAX_DEDUC
 
 
 document.getElementById('saveRecordBtn').addEventListener('click', async () => {
+console.log('1. Save button clicked');
+
+
   const statusEl = document.getElementById('saveStatus');
   const name = el.name.value.trim();
 
@@ -301,7 +304,8 @@ document.getElementById('saveRecordBtn').addEventListener('click', async () => {
     statusEl.style.color = '#a3372f';
     return;
   }
-
+   
+    console.log('2. Validating inputs before saving');
   const result = computeDeduction(
     el.accounts.value,
     el.rejections.value,
@@ -311,8 +315,13 @@ document.getElementById('saveRecordBtn').addEventListener('click', async () => {
     Number(el.V.value)
   );
 
+    console.log( '3. COmputed results:', result);
+
   statusEl.textContent = 'Saving...';
   statusEl.style.color = '#6b6656';
+
+   console.log('4 About to call window.saveRejectionRecord with:',typeof window.saveRejectionRecord);
+
 
   const response = await window.saveRejectionRecord({
     name: name,
@@ -324,6 +333,8 @@ document.getElementById('saveRecordBtn').addEventListener('click', async () => {
     rejectionRate: result.RR,
     finalDeduction: result.final
   });
+
+  console.log('5. Save response:', response);
 
   if (response.success) {
     statusEl.textContent = 'Saved.';
