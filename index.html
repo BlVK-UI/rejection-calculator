@@ -5,7 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rejction calculator</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    where,
+    orderBy,
+    getDocs,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCYIhkC4FnmWAUVVo6xHVD-xXsHlSO6fv0",
+    authDomain: "rejection-calculator.firebaseapp.com",
+    projectId: "rejection-calculator",
+    storageBucket: "rejection-calculator.firebasestorage.app",
+    messagingSenderId: "416366590155",
+    appId: "1:416366590155:web:97f255435151b8f839034e"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Save one monthly record
+  window.saveRejectionRecord = async function (record) {
+    try {
+      await addDoc(collection(db, "rejectionRecords"), {
+        ...record,
+        createdAt: serverTimestamp()
+      });
+      return { success: true };
+    } catch (err) {
+      console.error("Error saving record:", err);
+      return { success: false, error: err.message };
+    }
+  };
+
+  // Fetch all records for one employee, most recent first
+  window.getEmployeeHistory = async function (employeeName) {
+    try {
+      const q = query(
+        collection(db, "rejectionRecords"),
+        where("name", "==", employeeName),
+        orderBy("createdAt", "desc")
+      );
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map((doc) => doc.data());
+    } catch (err) {
+      console.error("Error fetching history:", err);
+      return [];
+    }
+  };
+</script>
+<script src="script.js" defer></script>
 </head>
 <body>
 
@@ -41,14 +97,14 @@
       <div class="field">
         <div class="field-label"><span>Accounts completed (N)</span></div>
         <div class="num-input big">
-          <input type="number" id="accounts" value="100" min="0" step="1" />
+          <input type="number" id="accounts" placeholder= " enter value" min="0" step="1" />
           <span class="suffix">acct</span>
         </div>
       </div>
       <div class="field">
-        <div class="field-label"><span>Rejections</span></div>
+        <div class="field-label"><span>Invalid Rejections</span></div>
         <div class="num-input big">
-          <input type="number" id="rejections" value="2" min="0" step="1" />
+          <input type="number" id="rejections" placeholder="enter value" min="0" step="1" />
           <span class="suffix">rej</span>
         </div>
       </div>
@@ -209,6 +265,11 @@
       </div>
     </div>
   </div>
+
+  <button id="saveRecordBtn" style="margin-top:12px; width:100%; padding:10px; background:var(--accent); color:white; border:none; border-radius:2px; font-family:var(--mono); cursor:pointer;">
+  Save This Record
+</button>
+<div id="saveStatus" style="font-family:var(--mono); font-size:11px; margin-top:6px;"></div>
  
   <div class="footnote">
     <p>All values are calculated in real time as you enter data. The final deduction is rounded to the nearest tenth of a point.</p>

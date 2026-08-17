@@ -246,6 +246,10 @@ function autoUpdateTier() {
 
 function updatePreset() {
   document.getElementById('tierPanel').hidden = currentType !== 'maintenance';
+  if (currentType === 'maintenance') {
+    autoUpdateTier(); // re-sync tier with the already-typed N before applying the preset
+  }
+
 
   if (currentType === 'opening') {
     applyOpeningPreset(currentRole);
@@ -285,3 +289,47 @@ updatePreset(); // apply the default (opening / modifier) on page load
 
 recalc();
 document.getElementById('maxLabel').textContent = `points deducted / ${MAX_DEDUCTION}`;
+
+
+
+document.getElementById('saveRecordBtn').addEventListener('click', async () => {
+  const statusEl = document.getElementById('saveStatus');
+  const name = el.name.value.trim();
+
+  if (!name) {
+    statusEl.textContent = 'Enter an employee name before saving.';
+    statusEl.style.color = '#a3372f';
+    return;
+  }
+
+  const result = computeDeduction(
+    el.accounts.value,
+    el.rejections.value,
+    Number(el.T.value),
+    Number(el.M.value),
+    Number(el.k.value),
+    Number(el.V.value)
+  );
+
+  statusEl.textContent = 'Saving...';
+  statusEl.style.color = '#6b6656';
+
+  const response = await window.saveRejectionRecord({
+    name: name,
+    accountType: currentType,
+    role: currentRole,
+    tier: currentType === 'maintenance' ? currentTier : null,
+    accounts: Number(el.accounts.value),
+    rejections: Number(el.rejections.value),
+    rejectionRate: result.RR,
+    finalDeduction: result.final
+  });
+
+  if (response.success) {
+    statusEl.textContent = 'Saved.';
+    statusEl.style.color = '#2f5d50';
+  } else {
+    statusEl.textContent = 'Save failed — check your connection.';
+    statusEl.style.color = '#a3372f';
+  }
+});

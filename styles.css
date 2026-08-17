@@ -102,6 +102,12 @@
   }
   .name-input input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
 
+
+  input::placeholder {
+  font-style: italic;
+}
+
+
   .role-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
