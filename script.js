@@ -272,23 +272,70 @@ document.getElementById('maxLabel').textContent = `points deducted / ${MAX_DEDUC
 
 
 
-let firebaseReady = typeof window.saveRejectionRecord === 'function';
-if (!firebaseReady) {
-  window.addEventListener('firebaseReady', () => { firebaseReady = true; }, { once: true });
-}
+let firebaseLoadPromise = null;
 
-function waitForFirebase() {
-  return new Promise((resolve) => {
-    if (firebaseReady) {
-      resolve();
-    } else {
-      window.addEventListener('firebaseReady', () => resolve(), { once: true });
-    }
-  });
+function loadFirebase() {
+  if (firebaseLoadPromise) return firebaseLoadPromise;
+
+  firebaseLoadPromise = (async () => {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js");
+    const {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      where,
+      orderBy,
+      getDocs,
+      serverTimestamp
+    } = await import("https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js");
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCYIhkC4FnmWAUVVo6xHVD-xXsHlSO6fv0",
+      authDomain: "rejection-calculator.firebaseapp.com",
+      projectId: "rejection-calculator",
+      storageBucket: "rejection-calculator.firebasestorage.app",
+      messagingSenderId: "416366590155",
+      appId: "1:416366590155:web:97f255435151b8f839034e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.saveRejectionRecord = async function (record) {
+      try {
+        await addDoc(collection(db, "rejectionRecords"), {
+          ...record,
+          createdAt: serverTimestamp()
+        });
+        return { success: true };
+      } catch (err) {
+        console.error("Error saving record:", err);
+        return { success: false, error: err.message };
+      }
+    };
+
+    window.getEmployeeHistory = async function (employeeName) {
+      try {
+        const q = query(
+          collection(db, "rejectionRecords"),
+          where("name", "==", employeeName),
+          orderBy("createdAt", "desc")
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map((doc) => doc.data());
+      } catch (err) {
+        console.error("Error fetching history:", err);
+        return [];
+      }
+    };
+  })();
+
+  return firebaseLoadPromise;
 }
 
 document.getElementById('saveRecordBtn').addEventListener('click', async () => {
-  await waitForFirebase();
+  await loadFirebase();
   
 
   const statusEl = document.getElementById('saveStatus');

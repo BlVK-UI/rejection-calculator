@@ -13,75 +13,20 @@
       <meta property="og:description" content="Calculate deductions for invalid account rejections based on rejection rate, role, and monthly volume.">
       <meta property="og:type" content="website">
     <link rel="stylesheet" href="styles.css">
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    addDoc,
-    query,
-    where,
-    orderBy,
-    getDocs,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCYIhkC4FnmWAUVVo6xHVD-xXsHlSO6fv0",
-    authDomain: "rejection-calculator.firebaseapp.com",
-    projectId: "rejection-calculator",
-    storageBucket: "rejection-calculator.firebasestorage.app",
-    messagingSenderId: "416366590155",
-    appId: "1:416366590155:web:97f255435151b8f839034e"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Save one monthly record
-  window.saveRejectionRecord = async function (record) {
-    try {
-      await addDoc(collection(db, "rejectionRecords"), {
-        ...record,
-        createdAt: serverTimestamp()
-      });
-      return { success: true };
-    } catch (err) {
-      console.error("Error saving record:", err);
-      return { success: false, error: err.message };
-    }
-  };
-
-  // Fetch all records for one employee, most recent first
-  window.getEmployeeHistory = async function (employeeName) {
-    try {
-      const q = query(
-        collection(db, "rejectionRecords"),
-        where("name", "==", employeeName),
-        orderBy("createdAt", "desc")
-      );
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map((doc) => doc.data());
-    } catch (err) {
-      console.error("Error fetching history:", err);
-      return [];
-    }
-  };
-  window.dispatchEvent(new Event('firebaseReady'));
-</script>
-<script src="script.js" defer></script>
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+    <script src="script.js" defer></script>
 </head>
 <body>
 
 
 
  
-<div class="shell">
+<main class="shell">
   <div class="masthead">
     <div class="eyebrow">Scorecard · Invalid Account Rejection</div>
     <h1>Deduction Calculator</h1>
-    <div class="formula-tag">Final Deduction = ((RR &minus; T) / (M &minus; T))^k &times; 5 &times; (N / VF)</div>
+    <div class="formula-tag">Final Deduction = (((RR &minus; T) / (M &minus; T))^k )  &times; 5 &times; (N / VF)</div>
   </div>
 
   
@@ -222,14 +167,13 @@
   <p><strong>VF</strong> &mdash; Volume Floor. The number of accounts needed before the rejection rate is treated as fully trustworthy. Below this, the deduction is scaled down, since a small sample of work shouldn't be judged as harshly as a large one.</p>
 
   <h3 class="footnote-heading">Formula</h3>
-  <p class="formula-final">Final Deduction = ((RR &minus; T) / (M &minus; T))^k &times; 5 &times; (N / VF)</p>
+  <p class="formula-final">Final Deduction = (((RR &minus; T) / (M &minus; T))^k) &times; 5 &times; (N / VF)</p>
   <p>RR is compared against T and M to find how far along the severity scale the employee sits, that position is shaped by the curve (k), scaled to the 5-point maximum, then adjusted down if the employee's monthly volume (N) falls short of the trusted volume floor (VF). The result is always bounded between 0 and 5.</p>
 
   <h3 class="footnote-heading">Rejection Cap Override</h3>
   <p>Regardless of the formula above, logging <strong>5 or more rejections</strong> in a single month automatically applies the full maximum deduction (5 points) &mdash; the rate-based calculation, threshold, curve, and volume floor are all bypassed once this cap is reached.</p>
 </div>
-</div>
-</div>
+</main>
     
 </body>
 </html>
