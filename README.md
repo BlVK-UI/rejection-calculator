@@ -44,16 +44,21 @@ if (rejections >= REJECTION_CAP) {
 ## Roles and Account Types
 
 Deduction strictness is controlled by presets, selected via three tiers:
-**Account Type → Role → (for Maintenance only) Monthly Volume Tier.**
+**Account Type → Role → Monthly Volume Tier.**
 
-### Account Opening (fixed typical volume)
+### Account Opening
 Modifiers typically complete 80 accounts/month; verifiers are expected to
-complete 2x that (160/month).
+complete 2x that (160/month). Like Account Maintenance, VF is looked up
+from the shared monthly volume tier table based on accounts actually
+entered — it is not fixed to a single value per role.
 
-| Role | T | M | k | VF |
-|---|---|---|---|---|
-| Modifier | 0 | 5 | 1 | 50 |
-| Verifier | 0 | 5 | 0.6 | 30 |
+| Role | T | M | k |
+|---|---|---|---|
+| Modifier | 0 | 5 | 1 |
+| Verifier | 0 | 5 | 0.6 |
+
+VF is drawn from the same tier table used for Account Maintenance (see
+below) — both account types now share identical tier logic.
 
 ### Account Maintenance (volume varies monthly)
 Base curve settings are the same as Account Opening; VF is looked up from a

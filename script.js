@@ -88,8 +88,8 @@ function applyCurrentPreset() {
 
     // Hard override : hitting the rejection cap means max deduction, regardless of the rejection rate, threshold, curve or volume floor.
     if (R >= REJECTION_CAP) {
-      return { RR, rawDeduction: MAX_DEDUCTION, VF: clamp(N / V, 0, 1), final: MAX_DEDUCTION * clamp(N / V, 0, 1) };
-    }
+  return { RR, rawDeduction: MAX_DEDUCTION, VF: 1, final: MAX_DEDUCTION };
+  }
     const span = M - T;
     let position = span > 0 ? (RR - T) / span : 0;
     position = clamp(position, 0, 1);
@@ -272,20 +272,24 @@ document.getElementById('maxLabel').textContent = `points deducted / ${MAX_DEDUC
 
 
 
-function waitForFirebase(callback, attempts = 0) {
-  if (typeof window.saveRejectionRecord === 'function') {
-    callback();
-  } else if (attempts < 50) {
-    setTimeout(() => waitForFirebase(callback, attempts + 1), 100);
-  } else {
-    console.error('Firebase never became available.');
-  }
+let firebaseReady = typeof window.saveRejectionRecord === 'function';
+if (!firebaseReady) {
+  window.addEventListener('firebaseReady', () => { firebaseReady = true; }, { once: true });
+}
+
+function waitForFirebase() {
+  return new Promise((resolve) => {
+    if (firebaseReady) {
+      resolve();
+    } else {
+      window.addEventListener('firebaseReady', () => resolve(), { once: true });
+    }
+  });
 }
 
 document.getElementById('saveRecordBtn').addEventListener('click', async () => {
-  await new Promise((resolve) => waitForFirebase(resolve));
-
-  console.log('1. Button clicked');
+  await waitForFirebase();
+  
 
   const statusEl = document.getElementById('saveStatus');
   const name = el.name.value.trim();
@@ -296,7 +300,7 @@ document.getElementById('saveRecordBtn').addEventListener('click', async () => {
     return;
   }
 
-  console.log('2. Name check passed:', name);
+ 
 
   const result = computeDeduction(
     el.accounts.value,
@@ -307,12 +311,12 @@ document.getElementById('saveRecordBtn').addEventListener('click', async () => {
     Number(el.V.value)
   );
 
-  console.log('3. Computed result:', result);
+  
 
   statusEl.textContent = 'Saving...';
   statusEl.style.color = '#6b6656';
 
-  console.log('4. About to call saveRejectionRecord. Does it exist?', typeof window.saveRejectionRecord);
+  
 
   const response = await window.saveRejectionRecord({
     name: name,
@@ -325,7 +329,7 @@ document.getElementById('saveRecordBtn').addEventListener('click', async () => {
     finalDeduction: result.final
   });
 
-  console.log('5. Got response:', response);
+  
 
   if (response.success) {
     statusEl.textContent = 'Saved.';

@@ -69,7 +69,10 @@
     gap: 2px;
     margin-bottom: 6px;
   }
-  .field-label span:first-child { font-weight: 600; font-size: 13px; }
+  .field-label span:first-child
+  .field-label label{
+     font-weight: 600; font-size: 13px; 
+    }
   
  
   .num-input { position: relative; display: flex; align-items: center; }
@@ -113,6 +116,11 @@
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
+
+#tierOptions {
+  grid-template-columns: 1fr 1fr;
+}
+
 .role-btn {
   text-align: left;
   padding: 9px 12px;
@@ -123,21 +131,27 @@
   font-family: var(--sans);
   width: 100%;
 }
+
 .role-btn.active {
   border-color: var(--accent);
   background: var(--accent-soft);
 }
+
 .role-btn .cb-label {
   font-size: 12px;
   font-weight: 700;
   font-family: var(--mono);
 }
+
 .role-btn .cb-desc {
   font-size: 11px;
   color: #6b6656;
   margin-top: 2px;
 }
- 
+
+ .curve-field {
+  margin-top: 14px;
+}
   .knob-grid, .entry-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

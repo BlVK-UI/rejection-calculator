@@ -9,7 +9,9 @@
       name="description"
       content="Calculate the deduction for an employee's invalid account rejections based on their rejection rate, role, and monthly volume.">
       <meta name="keywords" content="employee scorecard, deduction calculator, invalid account rejections, rejection rate, role-based deduction, monthly volume, performance evaluation">
-  
+      <meta property="og:title" content="Employee Scorecard Deduction Calculator">
+      <meta property="og:description" content="Calculate deductions for invalid account rejections based on rejection rate, role, and monthly volume.">
+      <meta property="og:type" content="website">
     <link rel="stylesheet" href="styles.css">
 
 <script type="module">
@@ -66,6 +68,7 @@
       return [];
     }
   };
+  window.dispatchEvent(new Event('firebaseReady'));
 </script>
 <script src="script.js" defer></script>
 </head>
@@ -92,7 +95,7 @@
     <h2>Employee</h2>
     <div class="field">
       <div class="field-label">
-        <span>Name</span>
+        <label for="empName">Name</label>
       </div>
       <div class="name-input">
         <input type="text" id="empName" placeholder="e.g. Chidinma O." />
@@ -100,14 +103,14 @@
     </div>
     <div class="entry-grid">
       <div class="field">
-        <div class="field-label"><span>Accounts completed (N)</span></div>
+        <div class="field-label"><label for="accounts">Accounts completed (N)</label></div>
         <div class="num-input big">
           <input type="number" id="accounts" placeholder= " enter value" min="0" step="1" />
           <span class="suffix">acct</span>
         </div>
       </div>
       <div class="field">
-        <div class="field-label"><span>Invalid Rejections</span></div>
+        <div class="field-label"><label for="rejections">Invalid Rejections</label></div>
         <div class="num-input big">
           <input type="number" id="rejections" placeholder="enter value" min="0" step="1" />
           <span class="suffix">rej</span>
@@ -118,16 +121,16 @@
  
 
 
-    <div class="panel">
+  <div class="panel">
   <h2>Account Type</h2>
   <div class="role-options" id="typeOptions">
     <button class="role-btn active" data-type="opening">
       <div class="cb-label">Account Opening</div>
-      <div class="cb-desc">Fixed volume.</div>
+      
     </button>
-    <button class="role-btn" data-type="maintenance">
+    <button class="role-btn " data-type="maintenance">
       <div class="cb-label">Account Maintenance</div>
-      <div class="cb-desc">Volume varies monthly.</div>
+     
     </button>
   </div>
 </div>
@@ -148,7 +151,7 @@
 
 <div class="panel" id="tierPanel" >
   <h2>Monthly Volume Tier</h2>
-  <div class="role-options" id="tierOptions" style="grid-template-columns: 1fr 1fr;">
+  <div class="role-options" id="tierOptions">
     <button class="role-btn active" data-tier="under30">
       <div class="cb-label">Under 30</div>
     </button>
@@ -164,25 +167,7 @@
   </div>
 </div>
  
-  <!--  <div class="field" style="margin-top:14px;">
-      <div class="field-label"><span>Curve shape</span></div>
-      <div class="curve-options" id="curveOptions">
-        <button class="curve-btn active" data-k="1">
-          <div class="cb-label">Linear (k = 1)</div>
-          <div class="cb-desc">Every % over threshold costs the same.</div>
-        </button>
-        <button class="curve-btn" data-k="2">
-          <div class="cb-label">Lenient &rarr; Harsh (k = 2)</div>
-          <div class="cb-desc">Forgiving near threshold, steep near max.</div>
-        </button>
-        <button class="curve-btn" data-k="0.5">
-          <div class="cb-label">Harsh &rarr; Flat (k = 0.5)</div>
-          <div class="cb-desc">Stings early, then levels off.</div>
-        </button>
-      </div>
-    </div>
-  -->
-    <div class="field" style="margin-top:14px;">
+    <div class="field curve-field">
       <div class="field-label"><span>Curve shape</span></div>
       <div class="curve-options" id="curveOptions">
         <div class="curve-btn active" id="curveDisplay">
@@ -193,7 +178,7 @@
     </div>
   <div class="error-box" id="errorBox" hidden></div>
  
-  <div class="result-panel">
+  <div class="result-panel" aria-live="polite">
     <div class="result-name" id="resultName">This employee</div>
     <div class="result-main">
       <span class="big-num" id="finalScore">0.0</span>
