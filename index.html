@@ -39,11 +39,20 @@
   <div class="panel">
     <h2>Employee</h2>
     <div class="field">
-      <div class="field-label">
-        <label for="empName">Name</label>
-      </div>
-      <div class="name-input">
-        <input type="text" id="empName" placeholder="e.g. Chidinma O." />
+      <div class="field-label"><span>Employee Name</span></div>
+      <div class="name-grid">
+        <div class="name-field">
+          <label for="firstName" class="name-sublabel">First Name</label>
+          <input type="text" id="firstName" placeholder="e.g. Chidinma" />
+        </div>
+        <div class="name-field">
+          <label for="surname" class="name-sublabel">Surname</label>
+          <input type="text" id="surname" placeholder="e.g. Obiora" />
+        </div>
+        <div class="name-field">
+          <label for="otherName" class="name-sublabel">Other Name <span class="optional-tag">(optional)</span></label>
+          <input type="text" id="otherName" placeholder="e.g. Chika" />
+        </div>
       </div>
     </div>
     <div class="entry-grid">
@@ -159,7 +168,7 @@
   <p>All values are calculated in real time as you enter data. The final deduction is rounded to the nearest tenth of a point.</p>
 
   <h3 class="footnote-heading">Variables</h3>
-  <p><strong>RR</strong> &mdash; Rejection Rate. The share of an employee's completed accounts that  Rejections &divide; Accounts.</p>
+  <p><strong>RR</strong> &mdash; Rejection Rate. The share of an employee's completed accounts that were rejected that month, calculated as Rejections &divide; Accounts.</p>
   <p><strong>T</strong> &mdash; Threshold. The rejection rate below which no points are deducted at all, since a small number of errors shouldn't be punished.</p>
   <p><strong>M</strong> &mdash; Max Rate. The rejection rate at which the rate-based deduction reaches its full severity.</p>
   <p><strong>k</strong> &mdash; Curve Exponent. Controls how sharply the deduction increases as the rejection rate moves from T toward M &mdash; a gentle ramp or a steep one. Set automatically by the selected Account Type and Role.</p>
@@ -168,7 +177,13 @@
 
   <h3 class="footnote-heading">Formula</h3>
   <p class="formula-final">Final Deduction = (((RR &minus; T) / (M &minus; T))^k) &times; 5 &times; (N / VF)</p>
-  <p>RR is compared against T and M to find how far along the severity scale the employee sits, that position is shaped by the curve (k), scaled to the 5-point maximum, then adjusted down if the employee's monthly volume (N) falls short of the trusted volume floor (VF). The result is always bounded between 0 and 5.</p>
+  <p>RR is compared against T and M to find how far along the severity scale the employee sits. That position is shaped by the curve (k), scaled to the 5-point maximum, then adjusted down if the employee's monthly volume (N) falls short of the trusted volume floor (VF). The result is always bounded between 0 and 5.</p>
+
+  <h3 class="footnote-heading">Worked Example</h3>
+  <p>Say an employee completed <strong>60 accounts</strong> with <strong>3 rejections</strong>. Their rejection rate (RR) is 3 &divide; 60 = <strong>5%</strong>. If their Max Rate (M) is 5%, they sit at the very top of the severity scale &mdash; the highest the rate-based part of the formula can reach. That's scaled to a raw deduction of 5 points, then adjusted by their Volume Floor: if their role needs 50 accounts to be fully trusted, and they only completed 60, their confidence factor is close to 1 (fully trusted), so close to the full 5 points would be deducted. If they had only completed 20 accounts instead, their confidence factor would drop to 20 &divide; 50 = 0.4, cutting that same deduction down to roughly 2 points &mdash; because a rejection rate based on so few accounts is less certain to reflect a real pattern.</p>
+
+  <h3 class="footnote-heading">Why Modifiers and Verifiers Differ</h3>
+  <p>Modifiers and Verifiers can see different deductions for the exact same rejection rate. Verifiers are the last check before an account goes through, so their curve (k) is set to rise faster at every point along the scale, and their Volume Floor is set lower &mdash; meaning their rejection rate counts as reliable sooner, with less accumulated work needed to "prove" it. This reflects that catching errors is the core of a Verifier's role, not an occasional part of it.</p>
 
   <h3 class="footnote-heading">Rejection Cap Override</h3>
   <p>Regardless of the formula above, logging <strong>5 or more rejections</strong> in a single month automatically applies the full maximum deduction (5 points) &mdash; the rate-based calculation, threshold, curve, and volume floor are all bypassed once this cap is reached.</p>

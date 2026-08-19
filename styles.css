@@ -93,7 +93,26 @@
     color: #8a8574; font-family: var(--mono); pointer-events: none;
   }
  
-  .name-input input[type="text"] {
+  .name-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .name-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .name-sublabel {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b6656;
+  }
+  .optional-tag {
+    font-weight: 400;
+    color: #8a8574;
+  }
+  .name-field input[type="text"] {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid var(--line);
@@ -103,8 +122,7 @@
     background: var(--paper);
     color: var(--ink);
   }
-  .name-input input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-
+  .name-field input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
 
   input::placeholder {
   font-style: italic;
@@ -225,15 +243,16 @@
  
   .footnote {
     font-family: var(--mono);
-    font-size: 10.5px;
-    color: #6b6656;
+    font-size: 12px;
+    color: #000000;
     margin-top: 16px;
     line-height: 1.6;
   }
 
 .footnote-heading {
+  text-decoration: underline;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--accent);
@@ -262,6 +281,7 @@
   .entry-grid,
   .knob-grid,
   .role-options,
+  .name-grid,
   #tierOptions {
     grid-template-columns: 1fr;
   }

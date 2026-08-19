@@ -1,5 +1,10 @@
   function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
 
+  function getFullName() {
+  const parts = [el.firstName.value.trim(), el.otherName.value.trim(), el.surname.value.trim()];
+  return parts.filter((p) => p.length > 0).join(' ');
+}
+
 
   const MAX_DEDUCTION = 5; //change this single value to change the maximum deduction for all employees. This is a global constant that can be adjusted as needed.
 
@@ -110,7 +115,9 @@ function applyCurrentPreset() {
   }
  
   const el = {
-    name: document.getElementById('empName'),
+    firstName: document.getElementById('firstName'),
+    surname: document.getElementById('surname'),
+    otherName: document.getElementById('otherName'),
     accounts: document.getElementById('accounts'),
     rejections: document.getElementById('rejections'),
     T: document.getElementById('T'),
@@ -129,7 +136,7 @@ function applyCurrentPreset() {
   
  
   // Recalculate whenever any input changes
-  [el.name, el.accounts, el.rejections, el.T, el.M, el.V, el.k].forEach((input) => {
+  [el.firstName, el.surname, el.otherName, el.accounts, el.rejections, el.T, el.M, el.V, el.k].forEach((input) => {
     input.addEventListener('input', recalc);
   });
 
@@ -201,7 +208,7 @@ function recalc() {
 
   const result = computeDeduction(accounts, rejections, T, M, k, V);
 
-  el.resultName.textContent = el.name.value.trim() ? el.name.value.trim() : 'This employee';
+  el.resultName.textContent = getFullName() ? getFullName() : 'This employee';
   el.finalScore.textContent = result.final.toFixed(1);
   el.barFill.style.width = (result.final / MAX_DEDUCTION * 100) + '%';
   el.barFill.style.background = barColor(result.final);
@@ -339,13 +346,16 @@ document.getElementById('saveRecordBtn').addEventListener('click', async () => {
   
 
   const statusEl = document.getElementById('saveStatus');
-  const name = el.name.value.trim();
+  const titleCase = (s) => s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  const name = titleCase(getFullName());
 
-  if (!name) {
-    statusEl.textContent = 'Enter an employee name before saving.';
+  if (!el.firstName.value.trim() || !el.surname.value.trim()) {
+    statusEl.textContent = 'Enter at least a first name and surname before saving.';
     statusEl.style.color = '#a3372f';
     return;
   }
+
+
 
  
 
@@ -358,6 +368,8 @@ document.getElementById('saveRecordBtn').addEventListener('click', async () => {
     Number(el.V.value)
   );
 
+  const now = new Date();
+  const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   
 
   statusEl.textContent = 'Saving...';
